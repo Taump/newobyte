@@ -1,0 +1,16 @@
+services:
+  payload:
+    image: node:22.23.5-alpine
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/home/node/app
+      - node_modules:/home/node/app/node_modules
+    working_dir: /home/node/app/
+    command: sh -c "corepack enable && corepack prepare pnpm@latest --activate && pnpm install && pnpm dev"
+    env_file:
+      - .env
+    # SQLite: DATABASE_URL=file:./.db lands in the project dir, which is bind-mounted above
+
+volumes:
+  node_modules:
