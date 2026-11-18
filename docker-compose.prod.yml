@@ -1,0 +1,41 @@
+# Production for a container platform that builds from the repository (Dokploy/Coolify-style):
+# named volumes instead of host folders, variables set in the platform's UI.
+# (On a plain VPS use deploy/docker-compose.yml + deploy/deploy.sh — see deploy/README.md.)
+#
+# Variables to set in the platform:
+#   NEXT_PUBLIC_SERVER_URL   https://obyte.org (also a build arg: inlined into the bundles)
+#   PAYLOAD_SECRET           openssl rand -hex 32; the app refuses to start without it
+#   ADMIN_EMAIL, ADMIN_PASSWORD   the only admin account (password ≥ 12 characters)
+#   ADMIN_PATH               optional hidden admin URL
+#
+# Note: unlike deploy/deploy.sh, the platform builds without the live database, so the pages are
+# pre-rendered from seed/. Until a page is edited again, a redeploy shows its seed/ version.
+services:
+  site:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:?set NEXT_PUBLIC_SERVER_URL}
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL}
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET:?set PAYLOAD_SECRET}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      ADMIN_PATH: ${ADMIN_PATH:-}
+    # SQLite database and uploads; an empty volume is filled with the shipped content (seed/)
+    # on first start. The image's folders are owned by the app user (uid 1001), and a new named
+    # volume takes that ownership over.
+    volumes:
+      - data:/app/data
+      - media:/app/media
+    # the platform's proxy reaches the container on the internal network
+    expose:
+      - '3000'
+    logging:
+      driver: json-file
+      options: { max-size: '10m', max-file: '5' }
+
+volumes:
+  data:
+  media:

@@ -51,6 +51,8 @@ To change the admin password or e-mail: edit `/srv/obyte/.env`, then run `docker
 
 Without Docker (Node + systemd): see "Production → Option B" in the main [`README.md`](../README.md).
 
+On a container platform that builds from the repository and forbids host folders (Dokploy, Coolify …): use [`docker-compose.prod.yml`](../docker-compose.prod.yml) — named volumes, variables set in the platform's UI. There the image is always pre-rendered from `seed/`, not from the live database (see the note in that file).
+
 ## Backups
 
 Add to cron: `15 3 * * * /srv/obyte/app/deploy/backup.sh`.
