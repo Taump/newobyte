@@ -17,6 +17,9 @@ FROM scratch AS data
 COPY seed/payload.db /payload.db
 
 FROM node:22.23.5-alpine AS base
+# build hosts with broken IPv6: Node would try the registry's IPv6 address first and time out
+# (corepack/pnpm UND_ERR_CONNECT_TIMEOUT) — prefer IPv4 addresses
+ENV NODE_OPTIONS=--dns-result-order=ipv4first
 RUN apk add --no-cache libc6-compat
 RUN corepack enable
 
