@@ -50,3 +50,16 @@ node_modules/
 /playwright/.cache/
 .db
 old-site
+# parity baselines (large, regenerate with `pnpm baseline`; archive the old-site capture before DNS switch)
+/tests/fixtures/baseline/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+migration-report.md
+
+# Lighthouse CI reports (pnpm perf)
+/.lighthouseci/
+
+# the content snapshot shipped with the site (pnpm db:export) IS committed
+!/seed/payload.db

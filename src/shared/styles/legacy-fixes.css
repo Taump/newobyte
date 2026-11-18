@@ -1,0 +1,22 @@
+/*
+ * Hand-written companions to the generated legacy.css: differences between the old markup and
+ * what the new components render, kept as small and explicit as possible.
+ */
+@layer components {
+  /*
+   * next/image renders width/height attributes, which lets flex rows shrink the photos; the old
+   * attribute-less <img>s kept their natural size (the IoT photo pair overflows its row).
+   */
+  .event-block > img {
+    flex-shrink: 0;
+  }
+
+  /*
+   * …and the width attribute stops `align-self: stretch` / percentage sizing that the old
+   * attribute-less images got (e.g. event photos stacked full-width on tablets). `width: auto`
+   * restores it; :where() keeps it below every rule of the old CSS.
+   */
+  :where(.legacy-content) img {
+    width: auto;
+  }
+}

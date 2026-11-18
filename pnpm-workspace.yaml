@@ -12,3 +12,5 @@ minimumReleaseAgeExclude:
   - '@payloadcms/translations@3.94.0'
   - '@payloadcms/ui@3.94.0'
   - payload@3.94.0
+  - '@payloadcms/plugin-nested-docs@3.94.0'
+  - '@payloadcms/plugin-seo@3.94.0'

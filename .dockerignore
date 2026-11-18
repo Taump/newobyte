@@ -1,0 +1,22 @@
+# Only what the build needs. Data (database, uploads) never goes into an image.
+.git
+.next
+node_modules
+old-site
+media
+deploy
+*.db
+!seed/payload.db
+*.db-*
+.env
+.env.*
+!.env.example
+tests
+test-results
+playwright-report
+.lighthouseci
+migration-report.md
+docs
+*.log
+.DS_Store
+.claude

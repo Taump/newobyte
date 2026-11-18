@@ -1,0 +1,15 @@
+# Production on the VPS (see deploy/README.md). Data lives in /srv/obyte on the host.
+services:
+  site:
+    image: obyte-site:latest
+    restart: unless-stopped
+    env_file: /srv/obyte/.env # PAYLOAD_SECRET, NEXT_PUBLIC_SERVER_URL, ADMIN_EMAIL/ADMIN_PASSWORD
+    volumes:
+      - /srv/obyte/data:/app/data
+      - /srv/obyte/media:/app/media
+    # behind Cloudflare → a reverse proxy on the host terminates TLS (Caddy/nginx)
+    ports:
+      - '127.0.0.1:3000:3000'
+    logging:
+      driver: json-file
+      options: { max-size: '10m', max-file: '5' }

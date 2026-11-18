@@ -67,8 +67,16 @@ export interface Config {
   };
   blocks: {};
   collections: {
-    users: User;
+    pages: Page;
+    events: Event;
+    faq: Faq;
+    'timeline-events': TimelineEvent;
+    'team-members': TeamMember;
+    exchanges: Exchange;
+    'coin-trackers': CoinTracker;
+    'social-links': SocialLink;
     media: Media;
+    users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -76,8 +84,16 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
-    users: UsersSelect<false> | UsersSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
+    events: EventsSelect<false> | EventsSelect<true>;
+    faq: FaqSelect<false> | FaqSelect<true>;
+    'timeline-events': TimelineEventsSelect<false> | TimelineEventsSelect<true>;
+    'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
+    exchanges: ExchangesSelect<false> | ExchangesSelect<true>;
+    'coin-trackers': CoinTrackersSelect<false> | CoinTrackersSelect<true>;
+    'social-links': SocialLinksSelect<false> | SocialLinksSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -87,8 +103,18 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    header: Header;
+    footer: Footer;
+    releases: Release;
+    'site-settings': SiteSetting;
+  };
+  globalsSelect: {
+    header: HeaderSelect<false> | HeaderSelect<true>;
+    footer: FooterSelect<false> | FooterSelect<true>;
+    releases: ReleasesSelect<false> | ReleasesSelect<true>;
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -119,10 +145,790 @@ export interface UserAuthOperations {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: number;
+  title: string;
+  layout: (
+    | ArticleBlock
+    | TextWideBlock
+    | DownloadBlock
+    | HeroBlock
+    | TechnologyBlock
+    | IndependentBlock
+    | BigChangesBlock
+    | TimelineBlock
+    | TeamBlock
+    | ExchangesBlock
+  )[];
+  /**
+   * URL segment. The home page uses "home".
+   */
+  slug: string;
+  /**
+   * Computed from parent + slug
+   */
+  path?: string | null;
+  /**
+   * Shorter title for menus/breadcrumbs
+   */
+  menuTitle?: string | null;
+  sitemapPriority?: number | null;
+  parent?: (number | null) | Page;
+  breadcrumbs?:
+    | {
+        doc?: (number | null) | Page;
+        url?: string | null;
+        label?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ArticleBlock".
+ */
+export interface ArticleBlock {
+  /**
+   * Optional anchor, e.g. "download" makes /#download scroll to this block.
+   */
+  anchorId?: string | null;
+  /**
+   * Page styling (header background etc.)
+   */
+  variant:
+    | 'applications-wrap'
+    | 'platform-wrap'
+    | 'autonomous-agents-wrap'
+    | 'smart-contracts-wrap'
+    | 'identity-wrap'
+    | 'payment-channels-wrap'
+    | 'oracles-wrap'
+    | 'issue-tokens-wrap'
+    | 'blackbytes-wrap'
+    | 'textcoins-wrap'
+    | 'prosaic-contracts-wrap'
+    | 'chatbots-wrap'
+    | 'iot-wrap2'
+    | 'technology-wrap'
+    | 'order-providers-wrap'
+    | 'developers-wrap'
+    | 'faq-wrap'
+    | 'contacts-wrap'
+    | 'careers-wrap'
+    | 'community-projects-wrap'
+    | 'distribution-wrap'
+    | 'community-grid-wrap'
+    | 'events-wrap'
+    | 'grants-wrap'
+    | 'obyte-foundation-wrap'
+    | 'privacy-wrap'
+    | 'terms-of-use-wrap'
+    | 'resources-wrap'
+    | 'testnet-wrap';
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'article';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TextWideBlock".
+ */
+export interface TextWideBlock {
+  /**
+   * Optional anchor, e.g. "download" makes /#download scroll to this block.
+   */
+  anchorId?: string | null;
+  variant: 'iot-wrap' | 'poc-wrap' | 'developers-wide' | 'obyte-foundation-wide';
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'textWide';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "DownloadBlock".
+ */
+export interface DownloadBlock {
+  /**
+   * Optional anchor, e.g. "download" makes /#download scroll to this block.
+   */
+  anchorId?: string | null;
+  network: 'mainnet' | 'testnet';
+  title: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  bigImage: number | Media;
+  smallImage: number | Media;
+  /**
+   * /downloads/<file> links are resolved by the Releases global.
+   */
+  downloadLinks?:
+    | {
+        label: string;
+        link: string;
+        id?: string | null;
+      }[]
+    | null;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'download';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: number;
+  /**
+   * Describe the image for screen readers, search engines and AI agents.
+   */
+  alt: string;
+  sourceHash?: string | null;
+  /**
+   * Original path on the old site
+   */
+  sourcePath?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    webp?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroBlock".
+ */
+export interface HeroBlock {
+  /**
+   * Optional anchor, e.g. "download" makes /#download scroll to this block.
+   */
+  anchorId?: string | null;
+  title: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  subtitle?: string | null;
+  description?: string | null;
+  mainQuote: {
+    text: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    };
+    author: string;
+    /**
+     * Book / manifesto title
+     */
+    source?: string | null;
+    avatar?: (number | null) | Media;
+    smallAvatar?: (number | null) | Media;
+  };
+  information?:
+    | {
+        title: string;
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  sideQuote: {
+    text: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    };
+    author: string;
+    /**
+     * Book / manifesto title
+     */
+    source?: string | null;
+    avatar?: (number | null) | Media;
+    smallAvatar?: (number | null) | Media;
+  };
+  comparisons?:
+    | {
+        image: number | Media;
+        title: string;
+        description?: string | null;
+        active?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'hero';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TechnologyBlock".
+ */
+export interface TechnologyBlock {
+  /**
+   * Optional anchor, e.g. "download" makes /#download scroll to this block.
+   */
+  anchorId?: string | null;
+  title: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  quote: {
+    text: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    };
+    author: string;
+    /**
+     * Book / manifesto title
+     */
+    source?: string | null;
+    avatar?: (number | null) | Media;
+    smallAvatar?: (number | null) | Media;
+  };
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  fallbackImage?: (number | null) | Media;
+  scenes?:
+    | {
+        scene: 'scene1' | 'scene2' | 'scene3';
+        title: string;
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'technology';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IndependentBlock".
+ */
+export interface IndependentBlock {
+  /**
+   * Optional anchor, e.g. "download" makes /#download scroll to this block.
+   */
+  anchorId?: string | null;
+  title: string;
+  description?: string | null;
+  quote: {
+    text: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    };
+    author: string;
+    /**
+     * Book / manifesto title
+     */
+    source?: string | null;
+    avatar?: (number | null) | Media;
+    smallAvatar?: (number | null) | Media;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'independent';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "BigChangesBlock".
+ */
+export interface BigChangesBlock {
+  /**
+   * Optional anchor, e.g. "download" makes /#download scroll to this block.
+   */
+  anchorId?: string | null;
+  text: string;
+  quote: {
+    text: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    };
+    author: string;
+    /**
+     * Book / manifesto title
+     */
+    source?: string | null;
+    avatar?: (number | null) | Media;
+    smallAvatar?: (number | null) | Media;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'bigChanges';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TimelineBlock".
+ */
+export interface TimelineBlock {
+  /**
+   * Optional anchor, e.g. "download" makes /#download scroll to this block.
+   */
+  anchorId?: string | null;
+  title: string;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'timeline';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TeamBlock".
+ */
+export interface TeamBlock {
+  /**
+   * Optional anchor, e.g. "download" makes /#download scroll to this block.
+   */
+  anchorId?: string | null;
+  title: string;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Leave ≥ number of members to hide the button.
+   */
+  visibleCount: number;
+  showAllLabel: string;
+  showLessLabel: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'team';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ExchangesBlock".
+ */
+export interface ExchangesBlock {
+  /**
+   * Optional anchor, e.g. "download" makes /#download scroll to this block.
+   */
+  anchorId?: string | null;
+  title: string;
+  intro?: string | null;
+  /**
+   * Shown under the exchange logos.
+   */
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'exchanges';
+}
+/**
+ * Sorted by date automatically (newest first); the site shows the month and year.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events".
+ */
+export interface Event {
+  id: number;
+  date: string;
+  title: string;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  images?:
+    | {
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  video?: {
+    provider?: ('youtube' | 'vimeo') | null;
+    videoId?: string | null;
+  };
+  /**
+   * Uncheck to hide without deleting.
+   */
+  showOnSite?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Drag rows to change the order on the site.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq".
+ */
+export interface Faq {
+  id: number;
+  _order?: string | null;
+  question: string;
+  answer: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Uncheck to hide without deleting.
+   */
+  showOnSite?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Sorted by date automatically; the site shows the month and year.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "timeline-events".
+ */
+export interface TimelineEvent {
+  id: number;
+  date: string;
+  title: string;
+  /**
+   * Uncheck to hide without deleting.
+   */
+  showOnSite?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Drag rows to change the order on the site.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-members".
+ */
+export interface TeamMember {
+  id: number;
+  _order?: string | null;
+  photo: number | Media;
+  name: string;
+  role: string;
+  links?:
+    | {
+        icon: 'github' | 'linkedin' | 'link';
+        /**
+         * Small square image shown in the white circle (16×16).
+         */
+        customIcon?: (number | null) | Media;
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Uncheck to hide without deleting.
+   */
+  showOnSite?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Drag rows to change the order on the site.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "exchanges".
+ */
+export interface Exchange {
+  id: number;
+  _order?: string | null;
+  name: string;
+  link: string;
+  /**
+   * Shown in grayscale, in colour on hover.
+   */
+  logo: number | Media;
+  /**
+   * Uncheck to hide without deleting.
+   */
+  showOnSite?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Drag rows to change the order on the site.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "coin-trackers".
+ */
+export interface CoinTracker {
+  id: number;
+  _order?: string | null;
+  name: string;
+  link: string;
+  /**
+   * 48×48 round icon
+   */
+  logo: number | Media;
+  logoHover: number | Media;
+  /**
+   * Uncheck to hide without deleting.
+   */
+  showOnSite?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Drag rows to change the order on the site.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "social-links".
+ */
+export interface SocialLink {
+  id: number;
+  _order?: string | null;
+  name: string;
+  link: string;
+  /**
+   * 32×32 round icon
+   */
+  icon: number | Media;
+  iconHover: number | Media;
+  /**
+   * Uncheck to hide without deleting.
+   */
+  showOnSite?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * The admin account is set by ADMIN_EMAIL / ADMIN_PASSWORD on the server.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
   id: number;
+  roles: 'admin' | 'editor';
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -142,25 +948,6 @@ export interface User {
     | null;
   password?: string | null;
   collection: 'users';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
- */
-export interface Media {
-  id: number;
-  alt: string;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -187,12 +974,44 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
-        relationTo: 'users';
-        value: number | User;
+        relationTo: 'pages';
+        value: number | Page;
+      } | null)
+    | ({
+        relationTo: 'events';
+        value: number | Event;
+      } | null)
+    | ({
+        relationTo: 'faq';
+        value: number | Faq;
+      } | null)
+    | ({
+        relationTo: 'timeline-events';
+        value: number | TimelineEvent;
+      } | null)
+    | ({
+        relationTo: 'team-members';
+        value: number | TeamMember;
+      } | null)
+    | ({
+        relationTo: 'exchanges';
+        value: number | Exchange;
+      } | null)
+    | ({
+        relationTo: 'coin-trackers';
+        value: number | CoinTracker;
+      } | null)
+    | ({
+        relationTo: 'social-links';
+        value: number | SocialLink;
       } | null)
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: number | User;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -238,9 +1057,401 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages_select".
+ */
+export interface PagesSelect<T extends boolean = true> {
+  title?: T;
+  layout?:
+    | T
+    | {
+        article?: T | ArticleBlockSelect<T>;
+        textWide?: T | TextWideBlockSelect<T>;
+        download?: T | DownloadBlockSelect<T>;
+        hero?: T | HeroBlockSelect<T>;
+        technology?: T | TechnologyBlockSelect<T>;
+        independent?: T | IndependentBlockSelect<T>;
+        bigChanges?: T | BigChangesBlockSelect<T>;
+        timeline?: T | TimelineBlockSelect<T>;
+        team?: T | TeamBlockSelect<T>;
+        exchanges?: T | ExchangesBlockSelect<T>;
+      };
+  slug?: T;
+  path?: T;
+  menuTitle?: T;
+  sitemapPriority?: T;
+  parent?: T;
+  breadcrumbs?:
+    | T
+    | {
+        doc?: T;
+        url?: T;
+        label?: T;
+        id?: T;
+      };
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ArticleBlock_select".
+ */
+export interface ArticleBlockSelect<T extends boolean = true> {
+  anchorId?: T;
+  variant?: T;
+  body?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TextWideBlock_select".
+ */
+export interface TextWideBlockSelect<T extends boolean = true> {
+  anchorId?: T;
+  variant?: T;
+  body?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "DownloadBlock_select".
+ */
+export interface DownloadBlockSelect<T extends boolean = true> {
+  anchorId?: T;
+  network?: T;
+  title?: T;
+  bigImage?: T;
+  smallImage?: T;
+  downloadLinks?:
+    | T
+    | {
+        label?: T;
+        link?: T;
+        id?: T;
+      };
+  body?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroBlock_select".
+ */
+export interface HeroBlockSelect<T extends boolean = true> {
+  anchorId?: T;
+  title?: T;
+  subtitle?: T;
+  description?: T;
+  mainQuote?:
+    | T
+    | {
+        text?: T;
+        author?: T;
+        source?: T;
+        avatar?: T;
+        smallAvatar?: T;
+      };
+  information?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  sideQuote?:
+    | T
+    | {
+        text?: T;
+        author?: T;
+        source?: T;
+        avatar?: T;
+        smallAvatar?: T;
+      };
+  comparisons?:
+    | T
+    | {
+        image?: T;
+        title?: T;
+        description?: T;
+        active?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TechnologyBlock_select".
+ */
+export interface TechnologyBlockSelect<T extends boolean = true> {
+  anchorId?: T;
+  title?: T;
+  quote?:
+    | T
+    | {
+        text?: T;
+        author?: T;
+        source?: T;
+        avatar?: T;
+        smallAvatar?: T;
+      };
+  body?: T;
+  fallbackImage?: T;
+  scenes?:
+    | T
+    | {
+        scene?: T;
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IndependentBlock_select".
+ */
+export interface IndependentBlockSelect<T extends boolean = true> {
+  anchorId?: T;
+  title?: T;
+  description?: T;
+  quote?:
+    | T
+    | {
+        text?: T;
+        author?: T;
+        source?: T;
+        avatar?: T;
+        smallAvatar?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "BigChangesBlock_select".
+ */
+export interface BigChangesBlockSelect<T extends boolean = true> {
+  anchorId?: T;
+  text?: T;
+  quote?:
+    | T
+    | {
+        text?: T;
+        author?: T;
+        source?: T;
+        avatar?: T;
+        smallAvatar?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TimelineBlock_select".
+ */
+export interface TimelineBlockSelect<T extends boolean = true> {
+  anchorId?: T;
+  title?: T;
+  body?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TeamBlock_select".
+ */
+export interface TeamBlockSelect<T extends boolean = true> {
+  anchorId?: T;
+  title?: T;
+  body?: T;
+  visibleCount?: T;
+  showAllLabel?: T;
+  showLessLabel?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ExchangesBlock_select".
+ */
+export interface ExchangesBlockSelect<T extends boolean = true> {
+  anchorId?: T;
+  title?: T;
+  intro?: T;
+  body?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events_select".
+ */
+export interface EventsSelect<T extends boolean = true> {
+  date?: T;
+  title?: T;
+  content?: T;
+  images?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  video?:
+    | T
+    | {
+        provider?: T;
+        videoId?: T;
+      };
+  showOnSite?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq_select".
+ */
+export interface FaqSelect<T extends boolean = true> {
+  _order?: T;
+  question?: T;
+  answer?: T;
+  showOnSite?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "timeline-events_select".
+ */
+export interface TimelineEventsSelect<T extends boolean = true> {
+  date?: T;
+  title?: T;
+  showOnSite?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-members_select".
+ */
+export interface TeamMembersSelect<T extends boolean = true> {
+  _order?: T;
+  photo?: T;
+  name?: T;
+  role?: T;
+  links?:
+    | T
+    | {
+        icon?: T;
+        customIcon?: T;
+        url?: T;
+        id?: T;
+      };
+  showOnSite?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "exchanges_select".
+ */
+export interface ExchangesSelect<T extends boolean = true> {
+  _order?: T;
+  name?: T;
+  link?: T;
+  logo?: T;
+  showOnSite?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "coin-trackers_select".
+ */
+export interface CoinTrackersSelect<T extends boolean = true> {
+  _order?: T;
+  name?: T;
+  link?: T;
+  logo?: T;
+  logoHover?: T;
+  showOnSite?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "social-links_select".
+ */
+export interface SocialLinksSelect<T extends boolean = true> {
+  _order?: T;
+  name?: T;
+  link?: T;
+  icon?: T;
+  iconHover?: T;
+  showOnSite?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media_select".
+ */
+export interface MediaSelect<T extends boolean = true> {
+  alt?: T;
+  sourceHash?: T;
+  sourcePath?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?:
+    | T
+    | {
+        webp?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  roles?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -258,24 +1469,6 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media_select".
- */
-export interface MediaSelect<T extends boolean = true> {
-  alt?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  url?: T;
-  thumbnailURL?: T;
-  filename?: T;
-  mimeType?: T;
-  filesize?: T;
-  width?: T;
-  height?: T;
-  focalX?: T;
-  focalY?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -319,6 +1512,354 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "header".
+ */
+export interface Header {
+  id: number;
+  navItems?:
+    | {
+        label: string;
+        link: string;
+        children?:
+          | {
+              label: string;
+              link: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  cta: {
+    label: string;
+    link: string;
+  };
+  mobileExtraLinks?:
+    | {
+        label: string;
+        link: string;
+        newTab?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer".
+ */
+export interface Footer {
+  id: number;
+  columns?:
+    | {
+        title: string;
+        links?:
+          | {
+              label: string;
+              link: string;
+              newTab?: boolean | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  newsletter?: {
+    enabled?: boolean | null;
+    /**
+     * MailerLite web form submit URL
+     */
+    action?: string | null;
+    placeholder?: string | null;
+    buttonLabel?: string | null;
+    successTitle?: string | null;
+    successText?: string | null;
+  };
+  /**
+   * {year} is replaced with the current year
+   */
+  copyright?: string | null;
+  /**
+   * Copyright line in the mobile menu ({year} = current year)
+   */
+  mobileCopyright?: string | null;
+  copyrightLink?: {
+    label?: string | null;
+    url?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "releases".
+ */
+export interface Release {
+  id: number;
+  mainnet?: {
+    /**
+     * Current version, for reference (e.g. 5.0.2)
+     */
+    version?: string | null;
+    files?:
+      | {
+          platform: 'win64' | 'win32' | 'macIntel' | 'macArm' | 'linux';
+          url: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  testnet?: {
+    /**
+     * Current version, for reference (e.g. 5.0.2)
+     */
+    version?: string | null;
+    files?:
+      | {
+          platform: 'win64' | 'win32' | 'macIntel' | 'macArm' | 'linux';
+          url: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  apps?: {
+    appStoreBadge?: (number | null) | Media;
+    googlePlayBadge?: (number | null) | Media;
+    mainnet?: {
+      appStore?: string | null;
+      googlePlay?: string | null;
+    };
+    testnet?: {
+      appStore?: string | null;
+      googlePlay?: string | null;
+    };
+  };
+  aliases?:
+    | {
+        /**
+         * Served at /downloads/<filename>
+         */
+        filename: string;
+        network: 'mainnet' | 'testnet';
+        platform: 'win64' | 'win32' | 'macIntel' | 'macArm' | 'linux';
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  siteTitle: string;
+  /**
+   * Used when a page has no meta description
+   */
+  defaultDescription: string;
+  /**
+   * Empty = /user/themes/obyte/assets/phone-shadow.png (the old site image)
+   */
+  defaultOgImage?: (number | null) | Media;
+  twitterSite?: string | null;
+  /**
+   * Short description of Obyte for AI agents (top of /llms.txt)
+   */
+  llmsIntro?: string | null;
+  /**
+   * Shown wherever a page has a “Contact email” link
+   */
+  contactEmail: string;
+  /**
+   * Shown wherever a page has a “Jobs email” link
+   */
+  jobsEmail: string;
+  /**
+   * In links: {github}/repo-name
+   */
+  githubUrl?: string | null;
+  /**
+   * In links: {explorer}/address/…
+   */
+  explorerUrl?: string | null;
+  /**
+   * In links: {testnetExplorer}
+   */
+  testnetExplorerUrl?: string | null;
+  /**
+   * In links: {discord}
+   */
+  discordUrl?: string | null;
+  /**
+   * In links: {telegram}
+   */
+  telegramUrl?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "header_select".
+ */
+export interface HeaderSelect<T extends boolean = true> {
+  navItems?:
+    | T
+    | {
+        label?: T;
+        link?: T;
+        children?:
+          | T
+          | {
+              label?: T;
+              link?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  cta?:
+    | T
+    | {
+        label?: T;
+        link?: T;
+      };
+  mobileExtraLinks?:
+    | T
+    | {
+        label?: T;
+        link?: T;
+        newTab?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer_select".
+ */
+export interface FooterSelect<T extends boolean = true> {
+  columns?:
+    | T
+    | {
+        title?: T;
+        links?:
+          | T
+          | {
+              label?: T;
+              link?: T;
+              newTab?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  newsletter?:
+    | T
+    | {
+        enabled?: T;
+        action?: T;
+        placeholder?: T;
+        buttonLabel?: T;
+        successTitle?: T;
+        successText?: T;
+      };
+  copyright?: T;
+  mobileCopyright?: T;
+  copyrightLink?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "releases_select".
+ */
+export interface ReleasesSelect<T extends boolean = true> {
+  mainnet?:
+    | T
+    | {
+        version?: T;
+        files?:
+          | T
+          | {
+              platform?: T;
+              url?: T;
+              id?: T;
+            };
+      };
+  testnet?:
+    | T
+    | {
+        version?: T;
+        files?:
+          | T
+          | {
+              platform?: T;
+              url?: T;
+              id?: T;
+            };
+      };
+  apps?:
+    | T
+    | {
+        appStoreBadge?: T;
+        googlePlayBadge?: T;
+        mainnet?:
+          | T
+          | {
+              appStore?: T;
+              googlePlay?: T;
+            };
+        testnet?:
+          | T
+          | {
+              appStore?: T;
+              googlePlay?: T;
+            };
+      };
+  aliases?:
+    | T
+    | {
+        filename?: T;
+        network?: T;
+        platform?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  siteTitle?: T;
+  defaultDescription?: T;
+  defaultOgImage?: T;
+  twitterSite?: T;
+  llmsIntro?: T;
+  contactEmail?: T;
+  jobsEmail?: T;
+  githubUrl?: T;
+  explorerUrl?: T;
+  testnetExplorerUrl?: T;
+  discordUrl?: T;
+  telegramUrl?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "collections_widget".
  */
 export interface CollectionsWidget {
@@ -326,6 +1867,546 @@ export interface CollectionsWidget {
     [k: string]: unknown;
   };
   width: 'full';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "EmailLinkBlock".
+ */
+export interface EmailLinkBlock {
+  address: 'contact' | 'jobs';
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'emailLink';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PageIntroBlock".
+ */
+export interface PageIntroBlock {
+  /**
+   * Rendered as <h1>
+   */
+  title: string;
+  lead?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  leadStyle: 'subBlock' | 'subTitle' | 'subBlockText';
+  texts?:
+    | {
+        style: 'block' | 'blockInline' | 'paragraph' | 'plain' | 'small' | 'subParagraph';
+        text: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'pageIntro';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SpacerBlock".
+ */
+export interface SpacerBlock {
+  /**
+   * Height in text lines
+   */
+  lines: number;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'spacer';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "DevCalloutBlock".
+ */
+export interface DevCalloutBlock {
+  image?: (number | null) | Media;
+  /**
+   * Small label above the title (leave empty for none)
+   */
+  category?: string | null;
+  title: string;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  white?: boolean | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'devCallout';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "InnerBoxBlock".
+ */
+export interface InnerBoxBlock {
+  style:
+    | 'list-block d-flex'
+    | 'flex-list'
+    | 'text-block'
+    | 'content-small'
+    | 'd-flex'
+    | 'container grid-xl > top-block'
+    | 'top-block > container grid-xl'
+    | 'event-block'
+    | 'p.bullet'
+    | 'p.bullet-padding'
+    | 'p.med-width'
+    | 'p.max-width'
+    | 'p.w-550'
+    | 'p.w-670'
+    | 'p.w-745'
+    | 'p.text-center'
+    | 'h2.section-heading text-center'
+    | 'small';
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'innerBox';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FlexBlockBlock".
+ */
+export interface FlexBlockBlock {
+  image?: (number | null) | Media;
+  mobileImage?: (number | null) | Media;
+  imagePosition?: ('left' | 'right') | null;
+  kind: 'flex-block' | 'flex-text' | 'd-flex' | 'content-wrap' | 'google-block d-inline-flex';
+  /**
+   * Old layout modifiers, e.g. "one", "center second", "blue".
+   */
+  modifiers?: string | null;
+  /**
+   * Page-specific style of the image itself
+   */
+  imageStyle?: ('info-img' | 'content-img' | 'img1' | 'img2' | 'mobile') | null;
+  /**
+   * Image box modifiers (old .img-block classes)
+   */
+  imageModifiers?: string | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Text without paragraph spacing
+   */
+  plainText?: boolean | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'flexBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CardGridBlock".
+ */
+export interface CardGridBlock {
+  variant: 'linkCards' | 'linkLists' | 'text';
+  cards?:
+    | {
+        title: string;
+        image?: (number | null) | Media;
+        link?: string | null;
+        /**
+         * Link lists variant
+         */
+        links?:
+          | {
+              label: string;
+              link?: string | null;
+              /**
+               * Text after the link, e.g. ": a pure JavaScript library"
+               */
+              description?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Link lists: one row per link (with its description)
+         */
+        linkRows?: boolean | null;
+        content?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        /**
+         * Old card class, e.g. "one"
+         */
+        modifier?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'cardGrid';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "WhiteBoxBlock".
+ */
+export interface WhiteBoxBlock {
+  label?: string | null;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Text without paragraph spacing (e.g. the textcoin example)
+   */
+  plainText?: boolean | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'whiteBox';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "BoxBlock".
+ */
+export interface BoxBlock {
+  style:
+    | 'list-block d-flex'
+    | 'flex-list'
+    | 'text-block'
+    | 'content-small'
+    | 'd-flex'
+    | 'container grid-xl > top-block'
+    | 'top-block > container grid-xl'
+    | 'event-block'
+    | 'p.bullet'
+    | 'p.bullet-padding'
+    | 'p.med-width'
+    | 'p.max-width'
+    | 'p.w-550'
+    | 'p.w-670'
+    | 'p.w-745'
+    | 'p.text-center'
+    | 'h2.section-heading text-center'
+    | 'small';
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'box';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "DistributionTableBlock".
+ */
+export interface DistributionTableBlock {
+  intro?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  headings: {
+    method: string;
+    years: string;
+    amount: string;
+    history: string;
+  };
+  rows?:
+    | {
+        method: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        };
+        years: string;
+        /**
+         * e.g. 645,341.799 (decimals shown smaller)
+         */
+        amount: string;
+        /**
+         * Obyte address(es), one per line (linked to the DAG explorer)
+         */
+        addresses: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'distributionTable';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FaqFeedBlock".
+ */
+export interface FaqFeedBlock {
+  /**
+   * Show only the first N questions (empty = all). Edit them in Lists → FAQ.
+   */
+  limit?: number | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'faqFeed';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "EventListBlock".
+ */
+export interface EventListBlock {
+  variant?: ('events' | 'grants') | null;
+  items?:
+    | {
+        date?: string | null;
+        title: string;
+        content?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        images?:
+          | {
+              image: number | Media;
+              id?: string | null;
+            }[]
+          | null;
+        video?: {
+          provider?: ('youtube' | 'vimeo') | null;
+          videoId?: string | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'eventList';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "EventsFeedBlock".
+ */
+export interface EventsFeedBlock {
+  /**
+   * Show only the newest N events (empty = all). Edit events in Lists → Events.
+   */
+  limit?: number | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'eventsFeed';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MediaListBlock".
+ */
+export interface MediaListBlock {
+  variant: 'resources' | 'attestors' | 'blackbytes';
+  items?:
+    | {
+        image?: (number | null) | Media;
+        title?: string | null;
+        link?: string | null;
+        content?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'mediaList';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ColumnsBlock".
+ */
+export interface ColumnsBlock {
+  columns?:
+    | {
+        /**
+         * Width in 12-column grid (full width on mobile)
+         */
+        width: number;
+        content?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        video?: {
+          provider?: ('youtube' | 'vimeo') | null;
+          videoId?: string | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'columns';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "VideoEmbedBlock".
+ */
+export interface VideoEmbedBlock {
+  provider: 'youtube' | 'vimeo';
+  videoId: string;
+  /**
+   * Accessible title of the video
+   */
+  title?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'videoEmbed';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RawHtmlBlock".
+ */
+export interface RawHtmlBlock {
+  html: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'rawHtml';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
