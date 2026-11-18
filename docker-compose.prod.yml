@@ -15,18 +15,11 @@ services:
     build:
       context: .
       args:
-        NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:-}
-        # Mirrors: Timeweb's build servers can't connect to the CDNs behind registry.npmjs.org
-        # (Cloudflare) and dl-cdn.alpinelinux.org (Fastly). Integrity is still checked: pnpm
-        # against the lockfile hashes, corepack against npm's signing keys, apk its signatures.
-        # Override with variables of the same name.
-        ALPINE_MIRROR: ${ALPINE_MIRROR:-https://mirror.yandex.ru/mirrors/alpine}
-        NPM_REGISTRY: ${NPM_REGISTRY:-https://npm-mirror.gitverse.ru/}
-        PNPM_CONCURRENCY: ${PNPM_CONCURRENCY:-4}
+        NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:?set NEXT_PUBLIC_SERVER_URL}
     restart: unless-stopped
     environment:
-      NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:-}
-      PAYLOAD_SECRET: ${PAYLOAD_SECRET:-}
+      NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL}
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET:?set PAYLOAD_SECRET}
       ADMIN_EMAIL: ${ADMIN_EMAIL:-}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
       ADMIN_PATH: ${ADMIN_PATH:-}
@@ -36,10 +29,9 @@ services:
     volumes:
       - data:/app/data
       - media:/app/media
-    # Timeweb Cloud Apps: the domain is proxied to a host port of the FIRST service
-    # (80/443 are taken by the platform's nginx)
-    ports:
-      - '3000:3000'
+    # the platform's proxy reaches the container on the internal network
+    expose:
+      - '3000'
     logging:
       driver: json-file
       options: { max-size: '10m', max-file: '5' }

@@ -17,47 +17,15 @@ FROM scratch AS data
 COPY seed/payload.db /payload.db
 
 FROM node:22.23.5-alpine AS base
-# build hosts with broken IPv6: Node would try the registry's IPv6 address first and time out
-# (corepack/pnpm UND_ERR_CONNECT_TIMEOUT) — prefer IPv4 addresses
-ENV NODE_OPTIONS=--dns-result-order=ipv4first
-# Optional mirrors for hosts that can't reach the default CDNs (e.g. foreign CDNs throttled in
-# Russia): --build-arg ALPINE_MIRROR=https://mirror.yandex.ru/mirrors/alpine
-#            --build-arg NPM_REGISTRY=https://npm-mirror.gitverse.ru/
-# Defaults: the official sources. NPM_REGISTRY is used by corepack (pnpm download) and pnpm —
-# pnpm ≥ 11 reads only pnpm_config_* (it ignores npm_config_registry).
-ARG ALPINE_MIRROR=
-ARG NPM_REGISTRY=https://registry.npmjs.org/
-ENV COREPACK_NPM_REGISTRY=${NPM_REGISTRY} \
-  pnpm_config_registry=${NPM_REGISTRY} \
-  npm_config_registry=${NPM_REGISTRY}
-# Few parallel downloads and patient retries: mirrors drop connections when pnpm opens dozens
-# at once ("tcp connect error: Operation timed out"). Override: --build-arg PNPM_CONCURRENCY=…
-ARG PNPM_CONCURRENCY=4
-ENV pnpm_config_network_concurrency=${PNPM_CONCURRENCY} \
-  pnpm_config_fetch_retries=6 \
-  pnpm_config_fetch_retry_mintimeout=5000 \
-  pnpm_config_fetch_retry_maxtimeout=60000
-# The network check prints the sources and whether they answer (see the build log when a step
-# hangs); timeouts turn a hang into an error instead of a build that never ends.
-RUN --mount=type=bind,source=scripts/docker-netcheck.sh,target=/tmp/netcheck.sh \
-  if [ -n "$ALPINE_MIRROR" ]; then \
-  sed -i "s|https\?://dl-cdn.alpinelinux.org/alpine|${ALPINE_MIRROR%/}|" /etc/apk/repositories; \
-  fi \
-  && sh /tmp/netcheck.sh \
-  "$(head -1 /etc/apk/repositories)/$(apk --print-arch)/APKINDEX.tar.gz" \
-  "${npm_config_registry%/}/pnpm" \
-  && timeout 180 apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat
 RUN corepack enable
 
 # ── dependencies ──
 FROM base AS deps
 WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-# append-only: one line per event in the build log (no progress bar redraws)
 RUN --mount=type=cache,id=pnpm,target=/root/.local/share/pnpm/store \
-  echo "pnpm: downloading $(node -p 'require("./package.json").packageManager') via corepack" \
-  && timeout 300 pnpm --version \
-  && timeout 1800 pnpm install --frozen-lockfile --reporter=append-only
+  pnpm install --frozen-lockfile
 
 # ── build ──
 FROM base AS builder
