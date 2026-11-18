@@ -22,11 +22,13 @@ FROM node:22.23.5-alpine AS base
 ENV NODE_OPTIONS=--dns-result-order=ipv4first
 # Optional mirrors for hosts that can't reach the default CDNs (e.g. foreign CDNs throttled in
 # Russia): --build-arg ALPINE_MIRROR=https://mirror.yandex.ru/mirrors/alpine
-#            --build-arg NPM_REGISTRY=https://<npm mirror>/
-# Defaults: the official sources. NPM_REGISTRY is used by corepack (pnpm download) and pnpm.
+#            --build-arg NPM_REGISTRY=https://npm-mirror.gitverse.ru/
+# Defaults: the official sources. NPM_REGISTRY is used by corepack (pnpm download) and pnpm —
+# pnpm ≥ 11 reads only pnpm_config_* (it ignores npm_config_registry).
 ARG ALPINE_MIRROR=
 ARG NPM_REGISTRY=https://registry.npmjs.org/
 ENV COREPACK_NPM_REGISTRY=${NPM_REGISTRY} \
+  pnpm_config_registry=${NPM_REGISTRY} \
   npm_config_registry=${NPM_REGISTRY}
 # The network check prints the sources and whether they answer (see the build log when a step
 # hangs); timeouts turn a hang into an error instead of a build that never ends.

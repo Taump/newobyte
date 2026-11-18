@@ -21,7 +21,7 @@ services:
         # against the lockfile hashes, corepack against npm's signing keys, apk its signatures.
         # Override with variables of the same name.
         ALPINE_MIRROR: ${ALPINE_MIRROR:-https://mirror.yandex.ru/mirrors/alpine}
-        NPM_REGISTRY: ${NPM_REGISTRY:-https://registry.npmmirror.com/}
+        NPM_REGISTRY: ${NPM_REGISTRY:-https://npm-mirror.gitverse.ru/}
     restart: unless-stopped
     environment:
       NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:-}

@@ -5,7 +5,7 @@
 echo "── netcheck ──────────────────────────────────────────"
 echo "apk repositories:"
 sed 's/^/  /' /etc/apk/repositories
-echo "npm registry: ${npm_config_registry:-default}"
+echo "npm registry: ${pnpm_config_registry:-default}"
 echo "resolv.conf: $(grep -E '^nameserver' /etc/resolv.conf | tr '\n' ' ')"
 for url in "$@"; do
   host=$(echo "$url" | sed -E 's|^[a-z]+://([^/:]+).*|\1|')
