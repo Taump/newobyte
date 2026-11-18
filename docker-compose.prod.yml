@@ -16,9 +16,12 @@ services:
       context: .
       args:
         NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:-}
-        # optional mirrors if the build hangs on apk/pnpm (see the Dockerfile)
-        ALPINE_MIRROR: ${ALPINE_MIRROR:-}
-        NPM_REGISTRY: ${NPM_REGISTRY:-https://registry.npmjs.org/}
+        # Mirrors: Timeweb's build servers can't connect to the CDNs behind registry.npmjs.org
+        # (Cloudflare) and dl-cdn.alpinelinux.org (Fastly). Integrity is still checked: pnpm
+        # against the lockfile hashes, corepack against npm's signing keys, apk its signatures.
+        # Override with variables of the same name.
+        ALPINE_MIRROR: ${ALPINE_MIRROR:-https://mirror.yandex.ru/mirrors/alpine}
+        NPM_REGISTRY: ${NPM_REGISTRY:-https://registry.npmmirror.com/}
     restart: unless-stopped
     environment:
       NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:-}
