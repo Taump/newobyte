@@ -28,18 +28,27 @@ ARG ALPINE_MIRROR=
 ARG NPM_REGISTRY=https://registry.npmjs.org/
 ENV COREPACK_NPM_REGISTRY=${NPM_REGISTRY} \
   npm_config_registry=${NPM_REGISTRY}
-RUN if [ -n "$ALPINE_MIRROR" ]; then \
+# The network check prints the sources and whether they answer (see the build log when a step
+# hangs); timeouts turn a hang into an error instead of a build that never ends.
+RUN --mount=type=bind,source=scripts/docker-netcheck.sh,target=/tmp/netcheck.sh \
+  if [ -n "$ALPINE_MIRROR" ]; then \
   sed -i "s|https\?://dl-cdn.alpinelinux.org/alpine|${ALPINE_MIRROR%/}|" /etc/apk/repositories; \
   fi \
-  && apk add --no-cache libc6-compat
+  && sh /tmp/netcheck.sh \
+  "$(head -1 /etc/apk/repositories)/$(apk --print-arch)/APKINDEX.tar.gz" \
+  "${npm_config_registry%/}/pnpm" \
+  && timeout 180 apk add --no-cache libc6-compat
 RUN corepack enable
 
 # ── dependencies ──
 FROM base AS deps
 WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+# append-only: one line per event in the build log (no progress bar redraws)
 RUN --mount=type=cache,id=pnpm,target=/root/.local/share/pnpm/store \
-  pnpm install --frozen-lockfile
+  echo "pnpm: downloading $(node -p 'require("./package.json").packageManager') via corepack" \
+  && timeout 300 pnpm --version \
+  && timeout 900 pnpm install --frozen-lockfile --reporter=append-only
 
 # ── build ──
 FROM base AS builder
