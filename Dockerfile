@@ -20,7 +20,18 @@ FROM node:22.23.5-alpine AS base
 # build hosts with broken IPv6: Node would try the registry's IPv6 address first and time out
 # (corepack/pnpm UND_ERR_CONNECT_TIMEOUT) — prefer IPv4 addresses
 ENV NODE_OPTIONS=--dns-result-order=ipv4first
-RUN apk add --no-cache libc6-compat
+# Optional mirrors for hosts that can't reach the default CDNs (e.g. foreign CDNs throttled in
+# Russia): --build-arg ALPINE_MIRROR=https://mirror.yandex.ru/mirrors/alpine
+#            --build-arg NPM_REGISTRY=https://<npm mirror>/
+# Defaults: the official sources. NPM_REGISTRY is used by corepack (pnpm download) and pnpm.
+ARG ALPINE_MIRROR=
+ARG NPM_REGISTRY=https://registry.npmjs.org/
+ENV COREPACK_NPM_REGISTRY=${NPM_REGISTRY} \
+  npm_config_registry=${NPM_REGISTRY}
+RUN if [ -n "$ALPINE_MIRROR" ]; then \
+  sed -i "s|https\?://dl-cdn.alpinelinux.org/alpine|${ALPINE_MIRROR%/}|" /etc/apk/repositories; \
+  fi \
+  && apk add --no-cache libc6-compat
 RUN corepack enable
 
 # ── dependencies ──

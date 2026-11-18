@@ -14,11 +14,11 @@ services:
   site:
     build:
       context: .
-      # the platform's build containers have no working outbound network on the default bridge
-      # (apk/corepack hang or time out) while the host does — build steps use the host's network
-      network: host
       args:
         NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:?set NEXT_PUBLIC_SERVER_URL}
+        # optional mirrors if the build hangs on apk/pnpm (see the Dockerfile)
+        ALPINE_MIRROR: ${ALPINE_MIRROR:-}
+        NPM_REGISTRY: ${NPM_REGISTRY:-https://registry.npmjs.org/}
     restart: unless-stopped
     environment:
       NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL}
@@ -32,9 +32,10 @@ services:
     volumes:
       - data:/app/data
       - media:/app/media
-    # the platform's proxy reaches the container on the internal network
-    expose:
-      - '3000'
+    # Timeweb Cloud Apps: the domain is proxied to a host port of the FIRST service
+    # (80/443 are taken by the platform's nginx)
+    ports:
+      - '3000:3000'
     logging:
       driver: json-file
       options: { max-size: '10m', max-file: '5' }
