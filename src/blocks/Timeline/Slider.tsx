@@ -175,9 +175,10 @@ export function Slider({ points }: { points: Point[] }) {
               'max-sm:mt-0 max-sm:w-[45%] max-sm:px-16 max-sm:pt-30',
             )}
           >
-            <div className="absolute -top-15 left-0 size-14 rounded-full border-[5px] border-white bg-blue-2 shadow-[0_6px_20px_rgba(74,144,226,0.12)] max-sm:left-1/2 max-sm:-ml-12" />
+            {/* content-box like the old swiper slide: 14px + 2×5px border = 24px, centred on the line */}
+            <div className="absolute -top-15 left-0 box-content size-14 rounded-full border-[5px] border-white bg-blue-2 shadow-[0_6px_20px_rgba(74,144,226,0.12)] max-sm:left-1/2 max-sm:-ml-12" />
             <div>
-              <div className="mb-9 text-[12px]/[16px] font-bold text-blue-2">{point.date}</div>
+              <div className="mb-9 text-[12px]/[16px] font-bold text-primary">{point.date}</div>
               <div className="text-[20px]/[27px] font-normal text-text">{point.title}</div>
             </div>
           </div>

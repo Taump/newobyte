@@ -101,8 +101,8 @@ export function MobileNav({ header, copyright }: Props) {
                         href={item.link}
                         onClick={() => setOpen(false)}
                         className={clsx(
-                          'text-[24px] leading-[36px] hover:text-blue-2 focus:text-blue-2',
-                          isActivePath(pathname, item.link) ? 'text-blue-2' : 'text-link',
+                          'text-[24px] leading-[36px] hover:text-primary focus:text-primary',
+                          isActivePath(pathname, item.link) ? 'text-primary' : 'text-link',
                         )}
                       >
                         {item.label}
@@ -122,9 +122,9 @@ export function MobileNav({ header, copyright }: Props) {
                                   onClick={() => setOpen(false)}
                                   tabIndex={isOpen ? undefined : -1}
                                   className={clsx(
-                                    'text-[16px] hover:text-blue-2 focus:text-blue-2',
+                                    'text-[16px] hover:text-primary focus:text-primary',
                                     isActivePath(pathname, child.link)
-                                      ? 'text-blue-2'
+                                      ? 'text-primary'
                                       : 'text-link',
                                   )}
                                 >

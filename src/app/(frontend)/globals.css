@@ -49,10 +49,10 @@
   --color-gray: #e5e5ea;
   --color-dark-gray: #797c80;
   --color-dark-gray-2: #a6a6a6;
-  --color-primary: #3085ee;
+  --color-primary: #1164cb; /* old #3085ee: 3.4:1 on the page greys, below WCAG AA */
   --color-dark: #454d5d;
   --color-body-text: #50596c;
-  --color-primary-dark: #227ded;
+  --color-primary-dark: #0d55ad;
   --color-primary-light: #e1edfd;
   --color-menu-hover: #e9f1fb;
   --color-success: #43d50c;
@@ -106,8 +106,17 @@
     text-decoration: none;
     outline: none;
   }
+  /* links inside running text: colour alone is not enough to tell them apart (WCAG 1.4.1) */
+  p a:not([class]) {
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+    text-underline-offset: 0.15em;
+  }
+  p a:not([class]):hover {
+    text-decoration-color: currentColor;
+  }
   a:focus-visible {
-    box-shadow: 0 0 0 0.1rem rgb(48 133 238 / 0.2);
+    box-shadow: 0 0 0 0.1rem rgb(17 100 203 / 0.2);
   }
   /*
    * Element defaults of the old site (Spectre base/typography + theme overrides, from the

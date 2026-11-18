@@ -407,7 +407,7 @@
     color: #15202b;
   }
   .developers-wide .categories-list .category-block a {
-    color: #4a90e2;
+    color: var(--color-primary);
   }
   .developers-wide .categories-list .category-block .inner-wrap {
     max-width: 360px;
@@ -2246,7 +2246,7 @@
     color: #15202b;
   }
   .obyte-foundation-wide .categories-list .category-block a {
-    color: #4a90e2;
+    color: var(--color-primary);
   }
   .obyte-foundation-wide .categories-list .category-block ul {
     margin: 0 0 32px 16px;
@@ -2881,7 +2881,7 @@
     font-size: 12px;
     font-weight: 700;
     margin-bottom: 9px;
-    color: #4a90e2;
+    color: var(--color-primary);
   }
   .section.events-wrap .element-block .title {
     font-size: 24px;

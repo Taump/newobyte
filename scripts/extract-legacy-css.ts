@@ -180,6 +180,16 @@ css.walkComments((c) => {
 })
 
 /*
+ * Accessibility (WCAG AA, Lighthouse color-contrast): the old light blues (#4a90e2, #3085ee) as
+ * TEXT colour are below 4.5:1 on the page greys — text uses the site's primary token instead.
+ * Backgrounds/borders (bullets, dots, rules) keep the old colour.
+ */
+const LOW_CONTRAST_TEXT = /^#(4a90e2|3085ee)$/i
+css.walkDecls('color', (d) => {
+  if (LOW_CONTRAST_TEXT.test(d.value.trim())) d.value = 'var(--color-primary)'
+})
+
+/*
  * The header picture of each page variant (`.section.faq-wrap { background: url(…) }`) is the
  * largest element of most inner pages:
  * - the page preloads it (the browser would find it only after loading the CSS) — see the map

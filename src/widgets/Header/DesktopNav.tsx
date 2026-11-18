@@ -67,7 +67,7 @@ export function DesktopNav({ items }: { items: NavItems }) {
                       <SiteLink
                         href={child.link}
                         className={clsx(
-                          'block py-4 pl-20 pr-36 text-[16px] font-bold leading-[24px] hover:bg-menu-hover hover:text-blue-2',
+                          'block py-4 pl-20 pr-36 text-[16px] font-bold leading-[24px] hover:bg-menu-hover hover:text-primary',
                           isActivePath(pathname, child.link) ? 'text-primary' : 'text-link',
                         )}
                       >
