@@ -46,7 +46,7 @@
     "payload": "3.94.0",
     "react": "19.2.9",
     "react-dom": "19.2.9",
-    "sharp": "0.35.4",
+    "sharp": "0.35.5",
     "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {
