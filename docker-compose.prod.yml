@@ -14,6 +14,9 @@ services:
   site:
     build:
       context: .
+      # the platform's build containers have no working outbound network on the default bridge
+      # (apk/corepack hang or time out) while the host does — build steps use the host's network
+      network: host
       args:
         NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:?set NEXT_PUBLIC_SERVER_URL}
     restart: unless-stopped
